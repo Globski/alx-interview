@@ -1,7 +1,10 @@
 # Alx Interview - Pascal's Triangle
 
-## Descriotion
-This project involves creating a function to generate Pascal's Triangle using Python and returning it as a list of lists Each element in the triangle is the sum of the two elements above it, with edges set to 1. Pascal's Triangle is a triangular array where each element is the sum of the two directly above it. This project will help solidify your understanding of lists, functions, loops, and basic arithmetic operations in Python.
+![Pascal's Triangle](https://github.com/user-attachments/assets/f558bd5a-f3da-47d9-99ca-91b48cf98006)
+
+## Description
+
+This project involves creating a Python function that generates Pascal's Triangle and returns it as a list of lists. In Pascal's Triangle, each element is derived from the sum of the two elements directly above it, with the edges of each row set to 1. The triangle starts with a single 1 at the top. Each subsequent row contains values that are calculated using the values from the previous row. The first and last elements of each row are always 1, while the inner elements are determined by adding the two values above them. This project will help you strengthen your skills in working with lists, defining functions, using loops, and performing basic arithmetic operations in Python.
 
 ## Project Structure
 | Task | Description | Source Code |
