@@ -2,6 +2,8 @@
 """
 0-pascal_triangle
 """
+
+
 def pascal_triangle(n):
     """Generate Pascal's Triangle of size n."""
     if n <= 0:
