@@ -4,6 +4,9 @@
 
 This project determines if all locked boxes can be opened using a set of keys contained within them. Each box is indexed from 0 to n-1, and keys within the boxes allow access to other boxes. The first box, `boxes[0]`, is always unlocked. Each box can hold keys to other boxes
 
+**objective:**
+The task is to determine if all locked boxes can be opened using a method called `canUnlockAll`. Each box may contain keys that unlock other boxes, and the first box (index 0) is always unlocked.
+
 ## Project Structure
 
 | Task | Description | Source Code |
