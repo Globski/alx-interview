@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+"""Solution to lockboxes problem"""
 
 def canUnlockAll(boxes):
     """
@@ -11,20 +12,19 @@ def canUnlockAll(boxes):
     Returns:
     bool: True if all boxes can be opened, False otherwise.
     """
-    if not boxes or not isinstance(boxes, list):
+    if not isinstance(boxes, list) or len(boxes) == 0:
         return False
 
-    n = len(boxes)
-    unlocked = [False] * n
-    unlocked[0] = True
-    keys = [0]
+    visited = set()
+    queue = [0]
 
-    while keys:
-        current_box = keys.pop()
+    while queue:
+        box_index = queue.pop(0)
+        if box_index not in visited:
+            visited.add(box_index)
 
-        for key in boxes[current_box]:
-            if 0 <= key < n and not unlocked[key]:
-                unlocked[key] = True
-                keys.append(key)
+            for key in boxes[box_index]:
+                if key not in visited and key < len(boxes):
+                    queue.append(key)
 
-    return all(unlocked)
+    return len(visited) == len(boxes)
