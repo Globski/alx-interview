@@ -13,17 +13,17 @@ def canUnlockAll(boxes):
     Returns:
     bool: True if all boxes can be opened, False otherwise.
     """
+    from collections import deque
     if not isinstance(boxes, list) or len(boxes) == 0:
         return False
 
     visited = set()
-    queue = [0]
+    queue = deque([0])
 
     while queue:
-        box_index = queue.pop(0)
+        box_index = queue.popleft()
         if box_index not in visited:
             visited.add(box_index)
-
             for key in boxes[box_index]:
                 if key < len(boxes) and key not in visited:
                     queue.append(key)
