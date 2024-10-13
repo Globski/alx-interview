@@ -2,7 +2,7 @@
 
 def canUnlockAll(boxes):
     """
-    Determines if all boxes can be opened.
+    Determines if all boxes can be unlocked.
 
     Args:
     boxes (list): A list of lists where each inner list contains
@@ -10,18 +10,21 @@ def canUnlockAll(boxes):
 
     Returns:
     bool: True if all boxes can be opened, False otherwise.
-    """
-    from collections import deque
+    """   
+    if not boxes:
+        return False
+    
+    n = len(boxes)
+    unlocked = [False] * n
+    unlocked[0] = True
+    keys = [0]
 
-    visited = set()
-    queue = deque([0])
+    while keys:
+        current_box = keys.pop()
 
-    while queue:
-        box_index = queue.popleft()
-        if box_index not in visited:
-            visited.add(box_index)
-            for key in boxes[box_index]:
-                if key not in visited and key < len(boxes):
-                    queue.append(key)
+        for key in boxes[current_box]:
+            if 0 <= key < n and not unlocked[key]:
+                unlocked[key] = True
+                keys.append(key)
 
-    return len(visited) == len(boxes)
+    return all(unlocked)
