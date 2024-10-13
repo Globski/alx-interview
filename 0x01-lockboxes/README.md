@@ -2,10 +2,9 @@
 
 ### Description
 
-This project determines if all locked boxes can be opened using a set of keys contained within them. Each box is indexed from 0 to n-1, and keys within the boxes allow access to other boxes. The first box, `boxes[0]`, is always unlocked. Each box can hold keys to other boxes
+This project determines if all locked boxes can be opened using a set of keys contained within them. Each box is indexed from 0 to n-1, and keys within the boxes allow access to other boxes. The first box, `boxes[0]`, is always unlocked, and each box can hold keys to other boxes.
 
-**objective:**
-The task is to determine if all locked boxes can be opened using a method called `canUnlockAll`. Each box may contain keys that unlock other boxes, and the first box (index 0) is always unlocked.
+**Objective**: The task is to determine if all locked boxes can be opened using a method called `canUnlockAll`.
 
 ## Project Structure
 
@@ -39,18 +38,68 @@ The task is to determine if all locked boxes can be opened using a method called
 
 ## Functionality
 The main function, `canUnlockAll`, takes a list of lists as input, where each inner list contains keys to other boxes. The function returns `True` if all boxes can be opened, and `False` otherwise.
-- The function will return `True` or `False` based on whether all boxes can be opened.
 
-## How to use
-1. Clone the repository: Ensure Python is installed.
+
+## How to Use
+
+### Setup
+1. **Clone the Repository**: Start by cloning the repository to your local machine.
    ```bash
    git clone https://github.com/YOUR_USERNAME/alx-interview.git
    cd alx-interview/0x01-lockboxes
    ```
-2. Run the main script to test the function:
+
+2. **Navigate to the Project Directory**: Change into the project directory where the files are located.
+   ```bash
+   cd 0x01-lockboxes
+   ```
+
+### Running the Main Program
+1. **Open a Terminal**: Ensure you have a terminal open in the project directory.
+
+2. **Run the Test Script**: Execute the `main_0.py` file to run the test cases and see the results of the `canUnlockAll` function.
    ```bash
    ./main_0.py
    ```
+
+   This will output the results for the predefined test cases included in the `main_0.py` file.
+
+### Test Cases Included
+The `main_0.py` script includes several test cases to validate the functionality of the `canUnlockAll` function:
+
+- **Test Case 1**:
+  ```python
+  boxes = [[1], [2], [3], [4], []]
+  print(canUnlockAll(boxes))  # Expected Output: True
+  ```
+  - **Description**: This case tests a straightforward scenario where each box has a key to the next box, allowing all boxes to be opened.
+
+- **Test Case 2**:
+  ```python
+  boxes = [[1, 4, 6], [2], [0, 4, 1], [5, 6, 2], [3], [4, 1], [6]]
+  print(canUnlockAll(boxes))  # Expected Output: True
+  ```
+  - **Description**: This case checks a more complex scenario with multiple keys that open various boxes, ensuring that all boxes can still be accessed.
+
+- **Test Case 3**:
+  ```python
+  boxes = [[1, 4], [2], [0, 4, 1], [3], [], [4, 1], [5, 6]]
+  print(canUnlockAll(boxes))  # Expected Output: False
+  ```
+  - **Description**: This case tests a situation where not all boxes can be opened due to missing keys.
+
+### Modifying Test Cases
+You can modify the `main_0.py` file to add or change test cases as needed. Simply create new lists of boxes and call the `canUnlockAll` function with those lists.
+
+### Viewing Output
+The output of the test cases will be printed in the terminal, showing `True` or `False` based on whether all boxes can be opened for each test case.
+
+### Example Output
+```
+True
+True
+False
+```
 
 ## Tasks
 
