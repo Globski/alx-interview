@@ -20,13 +20,16 @@ def minOperations(n):
         int: Minimum number of operations to achieve exactly n 'H' characters.
              Returns 0 if n is impossible to achieve.
     """
-
-    if n <= 1:
+    if n < 2:
         return 0
 
     operations = 0
-    for i in range(2, n + 1):
-        while n % i == 0:
-            operations += i
-            n //= i
-    return operations if operations > 0 else 0
+    factor = 2
+
+    while n > 1:
+        while n % factor == 0:
+            operations += factor
+            n //= factor  # Reduce n
+        factor += 1
+
+    return operations
