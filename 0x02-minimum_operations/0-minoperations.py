@@ -8,7 +8,7 @@ only "Copy All" and "Paste" operations.
 
 def minOperations(n):
     """
-    Calculates the minimum number of operations to reach n 'H' characters.
+    Computes the minimum number of operations needed to reach n 'H' characters.
 
     The function uses the operations "Copy All" and "Paste" to build up to
     exactly n characters.
@@ -18,7 +18,8 @@ def minOperations(n):
 
     Returns:
         int: Minimum number of operations to achieve exactly n 'H' characters.
-             Returns 0 if n is impossible to achieve.
+             Returns 0 if n is less than or equal to 1, indicating it's 
+             impossible to achieve the target.
     """
     if n < 2:
         return 0
@@ -29,7 +30,7 @@ def minOperations(n):
     while n > 1:
         while n % factor == 0:
             operations += factor
-            n //= factor  # Reduce n
+            n //= factor
         factor += 1
 
     return operations
