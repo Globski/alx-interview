@@ -18,7 +18,7 @@ def minOperations(n):
 
     Returns:
         int: Minimum number of operations to achieve exactly n 'H' characters.
-             Returns 0 if n is less than or equal to 1, indicating it's 
+             Returns 0 if n is less than or equal to 1, indicating it's
              impossible to achieve the target.
     """
     if n < 2:
