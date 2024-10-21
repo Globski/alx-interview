@@ -146,8 +146,6 @@ KeyboardInterrupt
 - **Data Processing**: Understand how to parse strings and aggregate data.
 - **Regular Expressions**: Validate and extract specific patterns from the logs.
 - **Dictionaries**: Use to count occurrences and summarize data.
-- **Exception Handling**: Implement to ensure robustness of the code.
-
 
 ## Tasks
 
