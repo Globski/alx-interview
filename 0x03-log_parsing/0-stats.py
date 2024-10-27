@@ -1,77 +1,58 @@
 #!/usr/bin/python3
-"""
-This script reads log entries from standard input and computes statistics
-about HTTP response codes and total file sizes. It processes each line of
-input, summing file sizes and counting occurrences of specified status codes.
-
-The expected input format for each log entry is:
-<IP Address> - [<date>] "GET /projects/260 HTTP/1.1" <status code> <file size>
-
-Statistics are printed after every 10 lines processed and also on keyboard
-interruption (CTRL + C).
-
-Usage:
-    ./0-generator.py | ./0-stats.py
-"""
 
 import sys
-from collections import defaultdict
+import re
+import signal
 
+total_size = 0
+status_counts = {
+    200: 0,
+    301: 0,
+    400: 0,
+    401: 0,
+    403: 0,
+    404: 0,
+    405: 0,
+    500: 0
+}
+line_count = 0
 
-def parse_log():
-    """
-    Reads log entries from standard input and calculates statistics.
+def signal_handler(sig, frame):
+    print("\nExiting gracefully...")
+    print_summary()
+    sys.exit(0)
 
-    This function maintains a running total of the file sizes and counts
-    occurrences of specific HTTP status codes (200, 301, 400, 401, 403, 404, 405, 500).
-    It processes each line of input and updates the metrics accordingly.
+def print_summary():
+    print(f"File size: {total_size}")
+    for status in sorted(status_counts.keys()):
+        if status_counts[status] > 0:
+            print(f"{status}: {status_counts[status]}")
 
-    The function prints the statistics after every 10 valid log entries
-    and handles keyboard interruption gracefully by printing the final statistics.
-    """
-    total_size = 0
-    status_codes = defaultdict(int)
-    line_count = 0
+def parse_log_line(line):
+    global total_size, line_count
+
+    pattern = r'(?P<ip>[\d\.]+) - \[\S+\] "GET /projects/260 HTTP/1\.1" (?P<status>\d{3}) (?P<size>\d+)'
+    match = re.match(pattern, line)
+    if match:
+        status = int(match.group('status'))
+        size = int(match.group('size'))
+
+        # Update total size and counts
+        total_size += size
+        if status in status_counts:
+            status_counts[status] += 1
+
+        line_count += 1
+
+        if line_count % 10 == 0:
+            print_summary()
+
+if __name__ == "__main__":
+    signal.signal(signal.SIGINT, signal_handler)
 
     try:
         for line in sys.stdin:
-            line_count += 1
-            parts = line.split()
-
-            if len(parts) < 7:
-                continue
-            
-            try:
-                ip = parts[0]
-                date = parts[2][1:] + ' ' + parts[3][:-1]
-                method = parts[4]
-                status_code = int(parts[5])
-                file_size = int(parts[6])
-
-                if status_code in {200, 301, 400, 401, 403, 404, 405, 500}:
-                    status_codes[status_code] += 1
-                    total_size += file_size
-            
-            except (ValueError, IndexError):
-                continue
-
-            if line_count % 10 == 0:
-                print_stats(total_size, status_codes)
-            
-    except KeyboardInterrupt:
-        print_stats(total_size, status_codes)
-
-def print_stats(total_size, status_codes):
-    """
-    Prints the current statistics of the log parsing.
-
-    Args:
-        total_size (int): The accumulated total file size from the parsed logs.
-        status_codes (dict): A dictionary with counts of each status code.
-    """
-    print(f"File size: {total_size}")
-    for code in sorted(status_codes.keys()):
-        print(f"{code}: {status_codes[code]}")
-
-if __name__ == "__main__":
-    parse_log()
+            parse_log_line(line)
+    except Exception as e:
+        print(f"Error processing input: {e}")
+        print_summary()
