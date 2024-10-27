@@ -28,7 +28,6 @@ def parse_log_entry(line):
     match = re.fullmatch(log_pattern, line)
     if match:
         return match.group('status_code'), int(match.group('file_size'))
-    else:
     return None, 0
 
 def print_log_stats(total_file_size, status_counts):
