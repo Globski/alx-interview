@@ -28,7 +28,7 @@ def parse_log_entry(line):
     match = re.fullmatch(log_pattern, line)
     if match:
         return match.group('status_code'), int(match.group('file_size'))
-    return None, 0
+    return None, 0  # Return None and 0 if the line is not valid
 
 def print_log_stats(total_file_size, status_counts):
     """
@@ -57,13 +57,18 @@ def process_logs():
         while True:
             line = input()
             status_code, file_size = parse_log_entry(line)
-            if status_code:
+            if status_code:  # Only process lines that are valid
                 status_counts[status_code] += 1
-            total_file_size += file_size
-            line_count += 1
+                total_file_size += file_size
+                line_count += 1
 
-            if line_count % 10 == 0:
-                print_log_stats(total_file_size, status_counts)
+                # Print stats every 10 lines
+                if line_count % 10 == 0:
+                    print_log_stats(total_file_size, status_counts)
+            else:
+                # Optionally, log or print a message about invalid lines for debugging
+                # print(f"Invalid line skipped: {line.strip()}")
+                continue  # Skip invalid lines
     except (KeyboardInterrupt, EOFError):
         print_log_stats(total_file_size, status_counts)
 
