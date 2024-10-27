@@ -1,49 +1,43 @@
 #!/usr/bin/python3
-'''A script for parsing HTTP request logs.
-Reads from stdin and computes statistics about response codes and file sizes.
-'''
 import sys
-import re
-from collections import defaultdict
+import signal
 
-def extract_log_data(log_line):
-    '''Extracts relevant data from a log line.'''
-    pattern = r'(?P<ip>\S+) - \[(?P<date>[^\]]+)\] "GET /projects/260 HTTP/1\.1" (?P<status_code>\d{3}) (?P<file_size>\d+)'
-    match = re.match(pattern, log_line)
-    if match:
-        return {
-            'status_code': match.group('status_code'),
-            'file_size': int(match.group('file_size')),
-        }
-    return None
+total_size = 0
+status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
+line_count = 0
 
-def print_statistics(total_file_size, status_code_counts):
-    '''Prints the accumulated statistics of the HTTP request log.'''
-    print(f'File size: {total_file_size}')
-    for status_code in sorted(status_code_counts.keys()):
-        if status_code_counts[status_code] > 0:
-            print(f'{status_code}: {status_code_counts[status_code]}')
+def print_stats():
+    print(f"File size: {total_size}")
+    for code in sorted(status_codes.keys()):
+        if status_codes[code] > 0:
+            print(f"{code}: {status_codes[code]}")
 
-def run():
-    '''Starts the log parser.'''
-    total_file_size = 0
-    status_code_counts = defaultdict(int)
-    line_count = 0
-
+def process_line(line):
+    global total_size, line_count
     try:
-        for log_line in sys.stdin:
-            log_data = extract_log_data(log_line)
-            if log_data:
-                total_file_size += log_data['file_size']
-                status_code_counts[log_data['status_code']] += 1
-                line_count += 1
+        parts = line.split()
+        if len(parts) < 2:
+            return  # Skip lines that don’t match the format
+        status_code = int(parts[-2])
+        file_size = int(parts[-1])
+        total_size += file_size
+        if status_code in status_codes:
+            status_codes[status_code] += 1
+        line_count += 1
+    except Exception:
+        pass  # Handle lines with unexpected formats gracefully
 
-                if line_count % 10 == 0:
-                    print_statistics(total_file_size, status_code_counts)
-    except KeyboardInterrupt:
-        print_statistics(total_file_size, status_code_counts)
-    except EOFError:
-        print_statistics(total_file_size, status_code_counts)
+def signal_handler(sig, frame):
+    print_stats()
+    sys.exit(0)
 
-if __name__ == '__main__':
-    run()
+signal.signal(signal.SIGINT, signal_handler)
+
+try:
+    for line in sys.stdin:
+        process_line(line.strip())
+        if line_count % 10 == 0:
+            print_stats()
+except KeyboardInterrupt:
+    print_stats()
+    sys.exit(0)
