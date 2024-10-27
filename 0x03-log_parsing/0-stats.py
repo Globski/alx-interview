@@ -1,58 +1,40 @@
 #!/usr/bin/python3
-
-import sys
 import re
-import signal
+import sys
+from collections import defaultdict
 
-total_size = 0
-status_counts = {
-    200: 0,
-    301: 0,
-    400: 0,
-    401: 0,
-    403: 0,
-    404: 0,
-    405: 0,
-    500: 0
-}
-line_count = 0
-
-def signal_handler(sig, frame):
-    print("\nExiting gracefully...")
-    print_summary()
-    sys.exit(0)
-
-def print_summary():
-    print(f"File size: {total_size}")
-    for status in sorted(status_counts.keys()):
-        if status_counts[status] > 0:
-            print(f"{status}: {status_counts[status]}")
-
-def parse_log_line(line):
-    global total_size, line_count
-
-    pattern = r'(?P<ip>[\d\.]+) - \[\S+\] "GET /projects/260 HTTP/1\.1" (?P<status>\d{3}) (?P<size>\d+)'
+def extract_input(line):
+    pattern = r'(?P<ip>\S+) - \[(?P<date>.*?)\] "(?P<request>.*?)" (?P<status_code>\d{3}) (?P<file_size>\d+)'
     match = re.match(pattern, line)
     if match:
-        status = int(match.group('status'))
-        size = int(match.group('size'))
+        return {
+            'status_code': match.group('status_code'),
+            'file_size': int(match.group('file_size')),
+        }
+    return None
 
-        # Update total size and counts
-        total_size += size
-        if status in status_counts:
-            status_counts[status] += 1
+def print_statistics(total_size, status_codes):
+    print(f"File size: {total_size}")
+    for code in sorted(status_codes):
+        if status_codes[code] > 0:
+            print(f"{code}: {status_codes[code]}")
 
-        line_count += 1
-
-        if line_count % 10 == 0:
-            print_summary()
-
-if __name__ == "__main__":
-    signal.signal(signal.SIGINT, signal_handler)
+def run():
+    total_size = 0
+    status_codes = defaultdict(int)
+    line_count = 0
 
     try:
         for line in sys.stdin:
-            parse_log_line(line)
-    except Exception as e:
-        print(f"Error processing input: {e}")
-        print_summary()
+            line_info = extract_input(line)
+            if line_info:
+                total_size += line_info['file_size']
+                status_codes[line_info['status_code']] += 1
+                line_count += 1
+                if line_count % 10 == 0:
+                    print_statistics(total_size, status_codes)
+    except (KeyboardInterrupt, EOFError):
+        print_statistics(total_size, status_codes)
+
+if __name__ == "__main__":
+    run()
