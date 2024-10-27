@@ -10,6 +10,7 @@ it prints the total file size and status code counts.
 import re
 from collections import defaultdict
 
+
 def parse_log_entry(line):
     """
     Parses a single HTTP log entry line to extract status code and file size.
@@ -28,7 +29,8 @@ def parse_log_entry(line):
     match = re.fullmatch(log_pattern, line)
     if match:
         return match.group('status_code'), int(match.group('file_size'))
-    return None, 0  # Return None and 0 if the line is not valid
+    return None, 0
+
 
 def print_log_stats(total_file_size, status_counts):
     """
@@ -41,6 +43,7 @@ def print_log_stats(total_file_size, status_counts):
     print('File size:', total_file_size)
     for status_code, count in sorted(status_counts.items()):
         print(f'{status_code}: {count}')
+
 
 def process_logs():
     """
@@ -57,20 +60,16 @@ def process_logs():
         while True:
             line = input()
             status_code, file_size = parse_log_entry(line)
-            if status_code:  # Only process lines that are valid
+            if status_code:
                 status_counts[status_code] += 1
-                total_file_size += file_size
-                line_count += 1
+            total_file_size += file_size
+            line_count += 1
 
-                # Print stats every 10 lines
-                if line_count % 10 == 0:
-                    print_log_stats(total_file_size, status_counts)
-            else:
-                # Optionally, log or print a message about invalid lines for debugging
-                # print(f"Invalid line skipped: {line.strip()}")
-                continue  # Skip invalid lines
+            if line_count % 10 == 0:
+                print_log_stats(total_file_size, status_counts)
     except (KeyboardInterrupt, EOFError):
         print_log_stats(total_file_size, status_counts)
+
 
 if __name__ == '__main__':
     process_logs()
