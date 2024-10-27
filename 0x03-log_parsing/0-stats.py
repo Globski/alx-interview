@@ -6,10 +6,8 @@ This script reads log entries from standard input, extracts status codes and
 file sizes, and maintains running totals. Every 10 lines, or upon interruption,
 it prints the total file size and status code counts.
 """
-
 import re
 from collections import defaultdict
-
 
 def parse_log_entry(line):
     """
@@ -67,7 +65,6 @@ def process_logs():
                 print_log_stats(total_file_size, status_counts)
     except (KeyboardInterrupt, EOFError):
         print_log_stats(total_file_size, status_counts)
-
 
 if __name__ == '__main__':
     process_logs()
