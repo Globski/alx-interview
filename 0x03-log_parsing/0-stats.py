@@ -1,51 +1,49 @@
 #!/usr/bin/python3
+'''A script for parsing HTTP request logs.
+Reads from stdin and computes statistics about response codes and file sizes.
+'''
 import sys
+import re
+from collections import defaultdict
 
-# Initialize metrics
-total_file_size = 0
-status_counts = {
-    "200": 0, "301": 0, "400": 0, "401": 0, "403": 0, "404": 0, "405": 0, "500": 0
-}
-line_count = 0
+def extract_log_data(log_line):
+    '''Extracts relevant data from a log line.'''
+    pattern = r'(?P<ip>\S+) - \[(?P<date>[^\]]+)\] "GET /projects/260 HTTP/1\.1" (?P<status_code>\d{3}) (?P<file_size>\d+)'
+    match = re.match(pattern, log_line)
+    if match:
+        return {
+            'status_code': match.group('status_code'),
+            'file_size': int(match.group('file_size')),
+        }
+    return None
 
-def print_stats():
-    """Print the accumulated metrics"""
-    print("File size: {}".format(total_file_size))
-    for code in sorted(status_counts.keys()):
-        if status_counts[code] > 0:
-            print("{}: {}".format(code, status_counts[code]))
+def print_statistics(total_file_size, status_code_counts):
+    '''Prints the accumulated statistics of the HTTP request log.'''
+    print(f'File size: {total_file_size}')
+    for status_code in sorted(status_code_counts.keys()):
+        if status_code_counts[status_code] > 0:
+            print(f'{status_code}: {status_code_counts[status_code]}')
 
-try:
-    for line in sys.stdin:
-        parts = line.strip().split()
-        
-        # Ensure line format
-        if len(parts) < 7:
-            continue
-        
-        # Extract file size and status code
-        file_size = parts[-1]
-        status_code = parts[-2]
-        
-        # Update file size
-        try:
-            total_file_size += int(file_size)
-        except ValueError:
-            continue
-        
-        # Update status code count
-        if status_code in status_counts:
-            status_counts[status_code] += 1
-        
-        # Increment line count and print stats every 10 lines
-        line_count += 1
-        if line_count % 10 == 0:
-            print_stats()
+def run():
+    '''Starts the log parser.'''
+    total_file_size = 0
+    status_code_counts = defaultdict(int)
+    line_count = 0
 
-except KeyboardInterrupt:
-    # On keyboard interrupt, print the final stats
-    print_stats()
-    raise
+    try:
+        for log_line in sys.stdin:
+            log_data = extract_log_data(log_line)
+            if log_data:
+                total_file_size += log_data['file_size']
+                status_code_counts[log_data['status_code']] += 1
+                line_count += 1
 
-# Final print in case the input ends without interruption
-print_stats()
+                if line_count % 10 == 0:
+                    print_statistics(total_file_size, status_code_counts)
+    except KeyboardInterrupt:
+        print_statistics(total_file_size, status_code_counts)
+    except EOFError:
+        print_statistics(total_file_size, status_code_counts)
+
+if __name__ == '__main__':
+    run()
