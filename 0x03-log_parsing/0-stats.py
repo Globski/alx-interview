@@ -6,50 +6,43 @@ Reads from stdin and computes statistics about response codes and file sizes.
 import sys
 import re
 from collections import defaultdict
-import signal
 
-# Initialize statistics
-total_file_size = 0
-status_codes = defaultdict(int)
-line_count = 0
-
-def signal_handler(sig, frame):
-    """Handles keyboard interruption (CTRL + C) gracefully."""
-    print("\nExiting gracefully...")
-    print_statistics()
-    sys.exit(0)
-
-def print_statistics():
-    """Prints the current statistics."""
-    print(f"File size: {total_file_size}")
-    for code in sorted(status_codes.keys()):
-        if status_codes[code] > 0:
-            print(f"{code}: {status_codes[code]}")
-
-def parse_log_line(line):
-    """Parses a single line of the log."""
-    global total_file_size, line_count
-    pattern = r'(?P<ip>[\d\.]+) - \[(?P<date>.+?)\] "GET /projects/260 HTTP/1\.1" (?P<status_code>\d{3}) (?P<file_size>\d+)'
-    match = re.match(pattern, line)
+def extract_log_data(log_line):
+    """Extracts relevant data from a single log line."""
+    pattern = r'(?P<ip>\S+) - \[(?P<date>.*?)\] "(?P<request>.*?)" (?P<status_code>\d{3}) (?P<file_size>\d+)'
+    match = re.match(pattern, log_line)
     if match:
-        status_code = match.group('status_code')
-        file_size = int(match.group('file_size'))
+        return {
+            'status_code': match.group('status_code'),
+            'file_size': int(match.group('file_size')),
+        }
+    return None
 
-        # Update metrics
-        total_file_size += file_size
-        status_codes[status_code] += 1
-        line_count += 1
+def print_statistics(total_file_size, status_code_counts):
+    """Prints the accumulated statistics of the HTTP request log."""
+    print(f"File size: {total_file_size}")
+    for status_code in sorted(status_code_counts):
+        if status_code_counts[status_code] > 0:
+            print(f"{status_code}: {status_code_counts[status_code]}")
 
-        # Print statistics every 10 lines
-        if line_count % 10 == 0:
-            print_statistics()
-
-if __name__ == "__main__":
-    # Setup signal handling
-    signal.signal(signal.SIGINT, signal_handler)
+def main():
+    total_file_size = 0
+    status_code_counts = defaultdict(int)
+    line_count = 0
 
     try:
-        for line in sys.stdin:
-            parse_log_line(line)
-    except EOFError:
-        print_statistics()
+        for log_line in sys.stdin:
+            log_data = extract_log_data(log_line)
+            if log_data:
+                total_file_size += log_data['file_size']
+                status_code_counts[log_data['status_code']] += 1
+                line_count += 1
+
+                # Print statistics every 10 lines
+                if line_count % 10 == 0:
+                    print_statistics(total_file_size, status_code_counts)
+    except (KeyboardInterrupt, EOFError):
+        print_statistics(total_file_size, status_code_counts)
+
+if __name__ == "__main__":
+    main()
