@@ -58,13 +58,14 @@ def process_logs():
             status_code, file_size = parse_log_entry(line)
             if status_code:
                 status_counts[status_code] += 1
-            total_file_size += file_size
-            line_count += 1
+                total_file_size += file_size
+                line_count += 1
 
-            if line_count % 10 == 0:
-                print_log_stats(total_file_size, status_counts)
+                if line_count % 10 == 0:
+                    print_log_stats(total_file_size, status_counts)
     except (KeyboardInterrupt, EOFError):
         print_log_stats(total_file_size, status_counts)
+
 
 if __name__ == '__main__':
     process_logs()
