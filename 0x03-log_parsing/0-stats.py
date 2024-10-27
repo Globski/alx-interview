@@ -38,7 +38,8 @@ def print_log_stats(total_file_size, status_counts):
 
     Args:
         total_file_size (int): The cumulative size of files processed.
-        status_counts (dict): A dictionary with status codes as keys and counts as values.
+        status_counts (dict): A dictionary with status codes
+        as keys and counts as values.
     """
     print('File size:', total_file_size)
     for status_code, count in sorted(status_counts.items()):
@@ -48,9 +49,9 @@ def print_log_stats(total_file_size, status_counts):
 def process_logs():
     """
     Main function for processing HTTP request logs from standard input.
-
-    Tracks the cumulative file size and counts of each status code. Every 10 lines,
-    or upon script interruption, it outputs the current statistics.
+    Tracks the cumulative file size and counts of each status code.
+    It outputs the current statistics every 10 lines
+    or upon script interruption.
     """
     total_file_size = 0
     status_counts = defaultdict(int)
