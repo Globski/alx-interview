@@ -9,7 +9,8 @@ encoding rules, which allow characters to be represented using one
 to four bytes.
 
 Function:
-    validUTF8(data): Determines if the input list represents valid UTF-8 encoding.
+    validUTF8(data): Determines if the input list
+    represents valid UTF-8 encoding.
 
 Usage:
     To use the `validUTF8` function, import it in your Python script
@@ -21,11 +22,12 @@ Example:
     print(validUTF8(data))
 """
 
+
 def validUTF8(data):
     """
     Determines if a given data set represents a valid UTF-8 encoding.
 
-    A character in UTF-8 can be 1 to 4 bytes long. This function checks 
+    A character in UTF-8 can be 1 to 4 bytes long. This function checks
     whether the provided list of integers represents valid UTF-8 bytes.
 
     Args:
@@ -38,7 +40,7 @@ def validUTF8(data):
 
     for num in data:
         byte = num & 0xFF
-        
+
         if num_bytes == 0:
             if (byte >> 7) == 0b0:
                 continue
