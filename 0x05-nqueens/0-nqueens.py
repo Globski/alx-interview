@@ -49,9 +49,10 @@ def is_safe(board, row, col):
         board (list): The list of positions of previously placed queens.
         row (int): The current row where the queen is to be placed.
         col (int): The current column where the queen is to be placed.
-     
+
     Returns:
-        bool: True if it's safe to place the queen at (row, col), False otherwise.
+        bool: True if it's safe to place the queen
+        at (row, col), False otherwise.
     """
     for r, c in board:
         if c == col or r - c == row - col or r + c == row + col:
@@ -84,7 +85,8 @@ def solve_nqueens(N):
 
         Args:
             row (int): The current row to attempt placing a queen.
-            board (list): The current list of queens placed on the board (row, col) pairs.
+            board (list): The current list of queens placed on the
+            board (row, col) pairs.
         """
         if row == N:
             solutions.append(board.copy())
