@@ -35,16 +35,52 @@ Exit Status:
 import sys
 
 def is_safe(board, row, col):
-    """Check if it's safe to place a queen at board[row][col]."""
+    """
+    Check if it's safe to place a queen at the given position (row, col) on the board.
+    
+    The function checks three conditions:
+    1. No other queen in the same column.
+    2. No other queen in the same diagonal (top-left to bottom-right).
+    3. No other queen in the same diagonal (top-right to bottom-left).
+    
+    Args:
+        board (list): The list of positions of previously placed queens.
+        row (int): The current row where the queen is to be placed.
+        col (int): The current column where the queen is to be placed.
+        
+    Returns:
+        bool: True if it's safe to place the queen at (row, col), False otherwise.
+    """
     for r, c in board:
         if c == col or r - c == row - col or r + c == row + col:
             return False
     return True
 
 def solve_nqueens(N):
-    """Solve the N-Queens problem using backtracking."""
+    """
+    Solve the N-Queens problem using backtracking.
+    
+    The function uses the helper function `backtrack()` to explore all possible 
+    placements of queens on the board. It stores the valid solutions in a list 
+    and returns it once all solutions are found.
+    
+    Args:
+        N (int): The size of the chessboard and the number of queens to place.
+        
+    Returns:
+        list: A list of lists, each representing a valid solution to the N-Queens puzzle.
+    """
     def backtrack(row, board):
-        """Try to place queens in rows starting from 'row'."""
+        """
+        Try to place queens in rows starting from the given `row`.
+        
+        If a valid configuration is found (all rows are filled), the solution 
+        is added to the list of solutions.
+        
+        Args:
+            row (int): The current row to attempt placing a queen.
+            board (list): The current list of queens placed on the board (row, col) pairs.
+        """
         if row == N:
             solutions.append(board.copy())
             return
@@ -59,7 +95,13 @@ def solve_nqueens(N):
     return solutions
 
 def main():
-    """Main function to handle input and call the N-Queens solver."""
+    """
+    Main function to handle input and execute the N-Queens solver.
+    
+    This function parses the command-line arguments, validates the input, 
+    and calls the `solve_nqueens()` function to find all solutions.
+    It then prints each solution to the console.
+    """
     if len(sys.argv) != 2:
         print("Usage: nqueens N")
         sys.exit(1)
